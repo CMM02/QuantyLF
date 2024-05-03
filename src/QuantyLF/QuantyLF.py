@@ -1,48 +1,97 @@
 #!/usr/bin/python
 import numpy as np
 
-from scipy.optimize import curve_fit, least_squares, nnls
+from scipy.optimize import least_squares, nnls
 from scipy.interpolate import interp1d
 import scipy as sp
 import scipy.signal as sig
-from lmfit.models import GaussianModel,VoigtModel, ConstantModel, LinearModel, QuadraticModel, LorentzianModel
-from lmfit import Model
 import lmfit
 import math
 import sys
 import os.path
 import time
 import subprocess
+import platform
 
 from multiprocessing import Process
 import pickle
 
-QuantyCommand = "/Users/phr542/Documents/Quanty/Quanty_macOS"
+import matplotlib.pyplot as plt
+
 QuantyFile = "/Users/phr542/Documents/Packages/QuantyLF/src/QuantyLF/quanty/LF_3d_Td.lua"
 
-EdgeJumpObject = "xxxx.pickle"
 
 class QuantyLF:
 
     def __init__(self):
-        pass
+        self.edge_jump_interp = None
+        self.quanty_command = {"default": "Quanty"}
+        self.platform = platform.system()
+        self.par_list = []
+        self.par_file = 'ParVals.txt'
+        self.file_par_dict = {}
+        self.__read_par_file__()
 
-    ###############################################################################
+    def __read_par_file__(self):
+        # check if the file exists
+        if not os.path.isfile(self.par_file):
+            return
+
+        with open(self.par_file) as f:
+            lines = f.readlines()
+            for line in lines:
+                line = line.split(maxsplit=1)
+                self.file_par_dict[line[0]] = line[1].strip()
 
 
     ####### Model the XAS edge jump and add it to the calculated output ###########
 
-    def get_current_path(self):
-        path = os.path.expanduser('~')
-        return path
+    def __edge_jump__(self, e, pos, jump, slope):
+        return jump/np.pi * (np.arctan((e-pos)*slope) + np.pi/2)
+
+    def __get_quanty_command__(self):
+        if self.platform in self.quanty_command.keys():
+            return self.quanty_command[self.platform]
+        else:
+            return self.quanty_command["default"]
+
+
+    """
+    Configure the edge jump for the XAS calculation. The edge jump is modelled as a arctan function.
+
+    Parameters:
+    edge_jumps: List of edge jumps. Each element in the list is a list of 3 elements: [position, jump, slope]
+    x_range: The range of x values to model the edge jump over
+    y_offset: The y offset of the edge jump
+    display: If True, the edge jump will be displayed along with the experimental XASs
+    """
+    def config_edge_jump(self, edge_jumps, x_range, y_offset=0, display=False):
+        x_range = np.linspace(x_range[0], x_range[1], math.ceil((max(x_range)-min(x_range))/0.1))
+        edge_jump_y = [y_offset] * len(x_range)
+        for i in range(len(edge_jumps)):
+            cur_jump = edge_jumps[i]
+            edge_jump_y += self.__edge_jump__(x_range, cur_jump[0], cur_jump[1], cur_jump[2])
+        
+        self.edge_jump_interp = interp1d(x_range, edge_jump_y, kind='cubic', fill_value="extrapolate")
+
+        if display:
+            if self.expXAS is None:
+                print("To display edge jump with experimental XAS, load the experimental XAS first")
+            else:
+                plt.plot(self.expXAS[:,0], self.expXAS[:,1])
+            plt.plot(x_range, edge_jump_y)
+            plt.show()
+        
 
     #A function to read in the edge jump in XAS as interpolated from experiment
-    def edge_jump(self, EdgeJumpObject):
-        with open(str(EdgeJumpObject),'rb') as f:
-            return pickle.load(f)
+    # def edge_jump(self, EdgeJumpObject):
+    #     with open(str(EdgeJumpObject),'rb') as f:
+    #         return pickle.load(f)
 
-    def add_edge_jump(self, EdgeJumpObject,energy_scale,calcSpec):
-        edge_jump_calc = self.edge_jump(EdgeJumpObject)(energy_scale)
+    def __add_edge_jump__(self, energy_scale,calcSpec):
+        if self.edge_jump_interp is None:
+            raise ValueError("Configure edge jump first, before running calculation with edge jump")
+        edge_jump_calc = self.edge_jump_interp(energy_scale)
         calc_edge = edge_jump_calc+calcSpec
         
         return calc_edge
@@ -54,15 +103,15 @@ class QuantyLF:
     #between the spectra
 
     #With edge jump fitting
-    def e_shift_res_edge_jump(self, pars,calcSpec,expSpec):
+    def __e_shift_res_edge_jump__(self, pars,calcSpec,expSpec):
 
         #shift calc by par, then interp, add edge jump and subtract
         calcSpecNew = pars[1]*np.interp(expSpec[:,0],calcSpec[:,0]+pars[0],calcSpec[:,1])
-        calcSpecNewJump = self.add_edge_jump(EdgeJumpObject,expSpec[:,0],calcSpecNew)
+        calcSpecNewJump = self.__add_edge_jump__(expSpec[:,0],calcSpecNew)
         return calcSpecNewJump - expSpec[:,1]
 
     #Similar as above but now without edge jump fitting
-    def e_shift_res(self, pars,calcSpec,expSpec):
+    def __e_shift_res__(self, pars,calcSpec,expSpec):
 
         #shift calc by par, then interp and subtract
         calcSpecNew = pars[1]*np.interp(expSpec[:,0],calcSpec[:,0]+pars[0],calcSpec[:,1])
@@ -70,7 +119,7 @@ class QuantyLF:
 
 
     #Similar to above, but now returns error in derivatives - better for peak matching?
-    def e_shift_res_deriv(self, pars,calcSpec,expSpec):
+    def __e_shift_res_deriv__(self, pars,calcSpec,expSpec):
 
     #shift calc by par, then interp and subtract
         calcSpecNew = pars[1]*np.interp(expSpec[:,0],calcSpec[:,0]+pars[0],calcSpec[:,1])
@@ -85,7 +134,7 @@ class QuantyLF:
     #A function which runs a Quanty calculation for a given set of parameters,
     #then compares the resulting spectrum against an experimental spectrum
     #read from file, and returns the difference between the spectra
-    def quanty_res(self, pars,allPars,type):
+    def __quanty_res__(self, pars,allPars,type):
 
         global lsiter
         
@@ -107,7 +156,7 @@ class QuantyLF:
                 f.write(parNames[i])
                 f.write(" ")
                 f.write(str(parVals[i]))
-                f.write("\n")
+                f.write("\n")   
         f.write("XAS 0\n")
         f.close()
         
@@ -121,8 +170,8 @@ class QuantyLF:
 
         #run Quanty - it will read the parameters from file, calculate 
         #the XAS, and write the new spectrum/spectra to file XAS_Calc.dat
-        #subprocess.call([QuantyCommand, QuantyFile],stdout=subprocess.DEVNULL)
-        subprocess.call([QuantyCommand, QuantyFile])#,stdout=None)
+        # subprocess.call([self.__get_quanty_command__(), QuantyFile],stdout=subprocess.DEVNULL)
+        subprocess.call([self.__get_quanty_command__(), QuantyFile])#,stdout=None)
 
         
         #load spectra and experiment to compare
@@ -131,7 +180,7 @@ class QuantyLF:
         #find the energy of largest peak in calculated and
         #experiment, to give a first rough shift for aligning energy
         calcPeak = calcSpec[calcSpec[:,1].argmax(),0]
-        expPeak = self.expSpec[self.expSpec[:,1].argmax(),0]
+        expPeak = self.expXAS[self.expXAS[:,1].argmax(),0]
         
         #parameters for the least squares function to fit the shift
         #and amplitude of the calculated XAS to compare to experiment
@@ -144,17 +193,20 @@ class QuantyLF:
         #calculated XAS, in order to compare it to experiment
         #Two versions are below - one using regular difference for least squares, and one using derivatives
         
-        res = least_squares(self.e_shift_res,dE,bounds=(lowlim,highlim),max_nfev=200,args=(calcSpec,self.expSpec),verbose=0)#
+        res_fn = self.__e_shift_res_edge_jump__ if self.edge_jump_interp is not None else self.__e_shift_res__
+
+        res = least_squares(res_fn,dE,bounds=(lowlim,highlim),max_nfev=200,args=(calcSpec,self.expXAS),verbose=0)#
 
         #Get the difference between calculated and experiment
         diff = res.fun
-        diff_XAS = np.true_divide(diff,len(self.expSpec))
+        diff_XAS = np.true_divide(diff,len(self.expXAS))
         
         #Write the XAS to file (this is on the calculated energy grid)
         calcSpec[:,0] = calcSpec[:,0] + res.x[0]
         calcSpec[:,1] = calcSpec[:,1] * res.x[1]
         
-        #calcSpec[:,1] = addEdgeJump(EdgeJumpObject,calcSpec[:,0],calcSpec[:,1])
+        if self.edge_jump_interp is not None:
+            calcSpec[:,1] = self.__add_edge_jump__(calcSpec[:,0],calcSpec[:,1])
         
         np.savetxt("XAS_Fit.dat",calcSpec)
 
@@ -170,15 +222,16 @@ class QuantyLF:
                 f.write(parNames[i])
                 f.write(" ")
                 if(parNames[i]=="RIXS"):
+                    print(parNames[i],parVals[i])
                     f.write(str(parVals[i]-res.x[0])) #shifted resonance energy according to XAS shift determined above
                     RIXSEner.append(parVals[i])
                 else:
-                    f.write(str(parVals[i])) #other parameter (non RIXS)
+                    f.write(str(parVals[i])) #other parameter (non RIXS)      
                 f.write("\n")
             f.close()    
             
             #call Quanty to do the RIXS calculation with the current set of parameters
-            subprocess.call([QuantyCommand, QuantyFile])#,stdout=subprocess.DEVNULL)
+            subprocess.call([self.__get_quanty_command__(), QuantyFile])#,stdout=subprocess.DEVNULL)
 
             #load the calculated RIXS spectra
             calcRIXS = np.loadtxt("RIXS_Calc.dat")
@@ -249,9 +302,9 @@ class QuantyLF:
         return  diff #should be able to return something like res.error? 
 
     
-    def fit_pars(self, pars,type):
+    def __fit_pars__(self,type):
         params = lmfit.Parameters()
-        for i in pars:
+        for i in self.par_list:
             if i[4] == 1:
                 params.add(i[0],value=i[1],min=i[2],max=i[3])
 
@@ -259,61 +312,72 @@ class QuantyLF:
         global lsiter
         lsiter = 1
 
-        minimizer = lmfit.Minimizer(self.quanty_res,params,fcn_args=(pars,type))
+        minimizer = lmfit.Minimizer(self.__quanty_res__,params,fcn_args=(self.par_list,type))
         res = minimizer.minimize(method='powell',params=params,options={'xtol': 1e-12})
 
         print("Final values: ")
         print(res.params)
 
-    def fit(self):
-        parList = []
 
-        # Set up ion and oxidation state
-        parList.append(["ion",25,25,25,0]) #name, start val, low lim, high lim, 0/1  for nofit/fit
-        parList.append(["oxy",3,3,3,0]) #name, start val, low lim, high lim, 0/1 for nofit/fit
-        parList.append(["Gamma1",0.4120250470353196,0.4,1,0]) #name, start val, low lim, high lim, 0/1 for nofit/fit
+    """
+    Add a parameter to the model
 
-        # Crystal field contribution in D4h symmetry
-        parList.append(["tenDq",-1.4494920445039643,-2,0.1,0]) #name, start val, low lim, high lim, 0/1  for nofit/fit
-        parList.append(["tenDqF",0.6815489483432551,0.01,1.0,0]) #name, start val, low lim, high lim, 0/1  for nofit/fit
+    ----------------
+    Parameters:
+    name: Name of the parameter
+    init_val: Initial value of the parameter
+    interv: List of two values, lower and upper bounds of the parameter
+    from_file: If True (default True), the parameter is read from a file (file value overrides init_val)
+    """
+    def add_par(self, name, init_val, interv = None, from_file = True):
+        if interv and (interv[1] - interv[0]) < 0:
+            raise ValueError("Upper bound of parameter should be greater than lower bound")
+        
+        low = 0
+        high = 0
+        if interv:
+            low = interv[0]
+            high = interv[1]
+            if name in self.file_par_dict.keys():
+                init_val = float(self.file_par_dict[name]) if from_file else init_val
+        else:
+            if name in self.file_par_dict.keys():
+                init_val = self.file_par_dict[name] if from_file else init_val
+        self.par_list.append([name, init_val, low, high, 1 if interv else 0])
 
-        # Multiplet contribution
-        # spin orbit coupling
-        parList.append(["zeta_2p",1.0196625781428472,0.8,1.02,0]) #name, start val, low lim, high lim, 0/1  for nofit/fit
-        parList.append(["zeta_3d",0.8403012992370478,0.8,1.02,0]) #name, start val, low lim, high lim, 0/1  for nofit/fit
-        parList.append(["Xzeta_3d",1.9487449271777082,0.8,1.02,0]) #name, start val, low lim, high lim, 0/1  for nofit/fit
 
-        # Slater integrals (Coulomb repulsion/exchange correlation)
-        parList.append(["Fdd",0.9397729329705585,0.8,1.0,1]) #name, start val, low lim, high lim, 0/1 for nofit/fit
-        parList.append(["XFdd",0.8137253445941214,0.8,1.0,1]) #name, start val, low lim, high lim, 0/1 for nofit/fit
-        parList.append(["Fpd",0.8098173584848158,0.8,1.0,1]) #name, start val, low lim, high lim, 0/1 for nofit/fit
-        parList.append(["Gpd",0.8053014352519605,0.8,1.0,1]) #name, start val, low lim, high lim, 0/1 for nofit/fit
+    """
+    Fit the parameters of the model to the experimental data
 
+    ----------------
+    Parameters:
+    mode: "XAS" or "RIXS". If "XAS", only the XAS data is fitted. If "RIXS", both XAS and RIXS data is fitted
+    """
+    def fit(self, type):        
+        self.__fit_pars__(type)
 
-        # Ligand field contribution
-        # on-site energies (usually drops out of the equation in crystal field theory)
-        parList.append(["Udd",6.543685631427877,2.0,7.0,0]) #name, start val, low lim, high lim, 0/1 for nofit/fit
-        parList.append(["Upd_Udd",4.001467895225598,0.5,5.0,0]) #name, start val, low lim, high lim, 0/1 for nofit/fit
+    """
+    Load the experimental XAS data from a file (no header, two columns: energy, intensity)
 
-        # Crystal field contribution of ligand site
-        parList.append(["tenDqL",0.022975132006965073,0.01,1.0,0]) #name, start val, low lim, high lim, 0/1 for nofit/fit
-
-        # Charge transfer contribution
-        parList.append(["Delta",4.040660314729548,1.0,5.0,0]) #name, start val, low lim, high lim, 0/1 for nofit/fit
-
-        # Hybridization
-        parList.append(["VfScale",0.9775495515653867,0.8,1.0,0]) #name, start val, low lim, high lim, 0/1 for nofit/fit
-        ## Define the incident RIXS energies 0 457.958 463.569
-        for i in range(len(self.RIXS_energies)):
-            parList.append(["RIXS",self.RIXS_energies[i],0,900,0])
-        ## Want to fit XAS or RIXS (incl. XAS)0 457.96 463.569
-        self.fit_pars(parList,"RIXS")
-
+    ----------------
+    Parameters:
+    path: Path to the file containing the experimental XAS data
+    """
     def load_exp_xas(self, path):
-        self.expSpec = np.loadtxt(path)
+        self.expXAS = np.loadtxt(path)
 
-    def load_exp_rixs(self, path, RIXS_energies):
-        self.RIXS_energies = RIXS_energies
+
+    """
+    Load the experimental RIXS data from a file (no header, first row: resonance energies, rest of the rows: energy, intensity)
+
+    ----------------
+    Parameters:
+    path: Path to the file containing the experimental RIXS data
+    RIXS_energies: List of resonance energies for which the RIXS data is available
+    """
+    def load_exp_rixs(self, path, RIXS_energies):        
+        for RIXS_energy in RIXS_energies:
+            self.add_par("RIXS",RIXS_energy,from_file=False)
         
         #load exp RIXS. For experimental, the first row are the resonance energies
         expRIXS = np.loadtxt(path)
@@ -326,4 +390,27 @@ class QuantyLF:
                     indices.append(j)
             
         self.expRIXS = expRIXS[1:,indices] #this removes the first row as well, which had the energy values (which we no longer need)
+
+
+    """
+    Set the path to the Quanty executable
+
+    ----------------
+    Parameters:
+    platform: Platform for which the path is being set
+    command: Path to the Quanty executable
+    """
+    def set_quanty_command(self, command, platform='default'):
+        self.quanty_command[platform] = command
+
+
+    """
+    Set custom path to the parameter file (default: ParVals.txt)
+
+    ----------------
+    Parameters:
+    par_file: Path to the parameter file
+    """
+    def set_par_file(self, par_file):
+        self.par_file = par_file
         

@@ -44,7 +44,12 @@ function ReadParameters()
 
       local iter = string.gmatch(line, "[^%s]+")
       local name = iter()
-      local val = tonumber(iter())
+      local val = 0
+      if name == "RIXS_Broad" or name == "XAS_Broad" then
+        val = {tonumber(iter()), tonumber(iter())}
+      else
+        val = tonumber(iter())
+      end
       pars[#pars + 1] = { name = name, val = val }
   end
   print(pars)
@@ -446,12 +451,28 @@ end
 
 if(doXAS) then
 
+
+XAS_Broad = {}
+XAS_Gamma = 0
+for i=1,#pars do 
+  if(pars[i].name == "XAS_Broad") then
+    XAS_Broad[#XAS_Broad+1] = pars[i].val
+  end
+  if(pars[i].name == "XAS_Gamma") then
+    XAS_Gamma = pars[i].val
+  end
+end
+
 XASRestrictions = {"restrictions",{NF,NB,{res3d,nd+1,nd+2}}}
 --XASSpectra = CreateSpectra(XASHamiltonian   , Tin, psiList[1],{{"Emin",-10},{"Emax",20},{"NE",2000},{"Gamma",0.1},XASRestrictions});
 Spectra_x = CreateSpectra(XASHamiltonian,TXASx,psiList[1],{{"Emin",-10},{"Emax",20},{"NE",2000},{"Gamma",0.1},XASRestrictions});
 Spectra_z = CreateSpectra(XASHamiltonian,TXASz,psiList[1],{{"Emin",-10},{"Emax",20},{"NE",2000},{"Gamma",0.1},XASRestrictions});
 XASSpectra = 1/2 * (Spectra_x + Spectra_z)
-XASSpectra.Broaden(0.5,{{-3.7, 0.5},{3, 0.7},{ 9.0, 0.7}})
+-- workaround for case where only Gaussian broadening is used ()
+if #XAS_Broad == 0 then
+  XAS_Broad = {{0, 0}}
+end
+XASSpectra.Broaden(XAS_Gamma,XAS_Broad)
 local file = assert(io.open("XAS_Calc.dat","w"))
 
 SpecTables = Spectra.ToTable(XASSpectra)
@@ -477,6 +498,13 @@ for i=1,#pars do
   end
 end
 
+RIXS_Broad = {}
+for i=1,#pars do 
+  if(pars[i].name == "RIXS_Broad") then
+    RIXS_Broad[#RIXS_Broad+1] = pars[i].val
+  end
+end
+
 Gamma1 = 1
 
 for i=1,#pars do
@@ -498,7 +526,9 @@ RIXSRestrictions2  = {"restrictions2",{NF, NB, {resL,9,10}}}
     RIXSSpectra_xz[i] = CreateResonantSpectra(XASHamiltonian, Hamiltonian, TXASx, TXASzdag, psiList[1], {{"Emin1",RIXSEners[i]}, {"Emax1",RIXSEners[i]}, {"NE1",1}, {"Gamma1",Gamma1}, {"Emin2",-2}, {"Emax2",20}, {"NE2",2000}, {"Gamma2",0.01},RIXSRestrictions1,RIXSRestrictions2})
     RIXSSpectra_xy[i] = CreateResonantSpectra(XASHamiltonian, Hamiltonian, TXASx, TXASydag, psiList[1], {{"Emin1",RIXSEners[i]}, {"Emax1",RIXSEners[i]}, {"NE1",1}, {"Gamma1",Gamma1}, {"Emin2",-2}, {"Emax2",20}, {"NE2",2000}, {"Gamma2",0.01},RIXSRestrictions1,RIXSRestrictions2})
     RIXSSpectra[i] = 0.25*(RIXSSpectra_zx[i] + RIXSSpectra_zy[i] + RIXSSpectra_xz[i] + RIXSSpectra_xy[i])
-    RIXSSpectra[i].Broaden(0,{{0.0,0.3},{2.7,0.5},{8,1}})
+    if #RIXS_Broad > 0 then
+      RIXSSpectra[i].Broaden(0,RIXS_Broad)
+    end
     RIXSTables[i] =   Spectra.ToTable(RIXSSpectra[i])
   end
   --Now write to file

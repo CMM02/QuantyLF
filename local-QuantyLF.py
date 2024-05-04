@@ -8,6 +8,9 @@ qunatyLF.load_exp_rixs('RIXS_Exp.dat', [638, 639.35, 640.16, 640.75])
 
 qunatyLF.config_edge_jump([[637.7, 0.14, 4], [648.2, 0.006, 8]], [600, 700,], display=False)
 
+# print(qunatyLF.available_cases())
+# qunatyLF.load_case('Td_3d', manual=True)
+qunatyLF.load_custom_case('./src/QuantyLF/cases/Td_3d.lua')
 
 # Set up ion and oxidation state
 qunatyLF.add_par('ion', 25)
@@ -43,7 +46,7 @@ qunatyLF.add_par('tenDqL', 0.022975132006965073, [0.01, 1.0])
 qunatyLF.add_par('Delta', 4.040660314729548, [1.0, 5.0])
 
 # # Hybridization
-qunatyLF.add_par('Vf', 0.9775495515653867, [0.8, 1.0])
+qunatyLF.add_par('VfScale', 0.9775495515653867, [0.8, 1.0])
 
 
 # # XAS and RIXS broadening

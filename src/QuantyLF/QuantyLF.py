@@ -8,7 +8,7 @@ import scipy.signal as sig
 import lmfit
 import math
 import sys
-import os.path
+from os.path import isfile
 import time
 import subprocess
 import platform
@@ -18,8 +18,8 @@ import pickle
 
 import matplotlib.pyplot as plt
 
-QuantyFile = "./src/QuantyLF/quanty/LF_3d_Td.lua"
-
+from importlib import resources as impresources
+from . import cases
 
 class QuantyLF:
 
@@ -34,7 +34,7 @@ class QuantyLF:
 
     def __read_par_file__(self):
         # check if the file exists
-        if not os.path.isfile(self.par_file):
+        if not isfile(self.par_file):
             return
 
         with open(self.par_file) as f:
@@ -54,34 +54,6 @@ class QuantyLF:
             return self.quanty_command[self.platform]
         else:
             return self.quanty_command["default"]
-
-
-    """
-    Configure the edge jump for the XAS calculation. The edge jump is modelled as a arctan function.
-
-    Parameters:
-    edge_jumps: List of edge jumps. Each element in the list is a list of 3 elements: [position, jump, slope]
-    x_range: The range of x values to model the edge jump over
-    y_offset: The y offset of the edge jump
-    display: If True, the edge jump will be displayed along with the experimental XASs
-    """
-    def config_edge_jump(self, edge_jumps, x_range, y_offset=0, display=False):
-        x_range = np.linspace(x_range[0], x_range[1], math.ceil((max(x_range)-min(x_range))/0.1))
-        edge_jump_y = [y_offset] * len(x_range)
-        for i in range(len(edge_jumps)):
-            cur_jump = edge_jumps[i]
-            edge_jump_y += self.__edge_jump__(x_range, cur_jump[0], cur_jump[1], cur_jump[2])
-        
-        self.edge_jump_interp = interp1d(x_range, edge_jump_y, kind='cubic', fill_value="extrapolate")
-
-        if display:
-            print("Displaying edge jump, this option has to be disabled for batch runs!")
-            if self.expXAS is None:
-                print("To display edge jump with experimental XAS, load the experimental XAS first")
-            else:
-                plt.plot(self.expXAS[:,0], self.expXAS[:,1])
-            plt.plot(x_range, edge_jump_y)
-            plt.show()
         
 
     #A function to read in the edge jump in XAS as interpolated from experiment
@@ -171,8 +143,8 @@ class QuantyLF:
 
         #run Quanty - it will read the parameters from file, calculate 
         #the XAS, and write the new spectrum/spectra to file XAS_Calc.dat
-        # subprocess.call([self.__get_quanty_command__(), QuantyFile],stdout=subprocess.DEVNULL)
-        subprocess.call([self.__get_quanty_command__(), QuantyFile])#,stdout=None)
+        # subprocess.call([self.__get_quanty_command__(), self.quanty_file],stdout=subprocess.DEVNULL)
+        subprocess.call([self.__get_quanty_command__(), self.quanty_file])#,stdout=None)
 
         
         #load spectra and experiment to compare
@@ -232,7 +204,7 @@ class QuantyLF:
             f.close()    
             
             #call Quanty to do the RIXS calculation with the current set of parameters
-            subprocess.call([self.__get_quanty_command__(), QuantyFile])#,stdout=subprocess.DEVNULL)
+            subprocess.call([self.__get_quanty_command__(), self.quanty_file])#,stdout=subprocess.DEVNULL)
 
             #load the calculated RIXS spectra
             calcRIXS = np.loadtxt("RIXS_Calc.dat")
@@ -320,6 +292,92 @@ class QuantyLF:
         print(res.params)
 
 
+
+    """
+    Configure the edge jump for the XAS calculation. The edge jump is modelled as a arctan function.
+
+    Parameters:
+    edge_jumps: List of edge jumps. Each element in the list is a list of 3 elements: [position, jump, slope]
+    x_range: The range of x values to model the edge jump over
+    y_offset: The y offset of the edge jump
+    display: If True, the edge jump will be displayed along with the experimental XASs
+    """
+    def config_edge_jump(self, edge_jumps, x_range, y_offset=0, display=False):
+        x_range = np.linspace(x_range[0], x_range[1], math.ceil((max(x_range)-min(x_range))/0.1))
+        edge_jump_y = [y_offset] * len(x_range)
+        for i in range(len(edge_jumps)):
+            cur_jump = edge_jumps[i]
+            edge_jump_y += self.__edge_jump__(x_range, cur_jump[0], cur_jump[1], cur_jump[2])
+        
+        self.edge_jump_interp = interp1d(x_range, edge_jump_y, kind='cubic', fill_value="extrapolate")
+
+        if display:
+            print("Displaying edge jump, this option has to be disabled for batch runs!")
+            if self.expXAS is None:
+                print("To display edge jump with experimental XAS, load the experimental XAS first")
+            else:
+                plt.plot(self.expXAS[:,0], self.expXAS[:,1])
+            plt.plot(x_range, edge_jump_y)
+            plt.show()
+
+    """
+    Return the available cases for which the Quanty calculations are available
+
+    ----------------
+    Returns:
+    List of available cases
+    """
+    def available_cases(self):
+        base_path = impresources.files(cases)
+        cases = []
+        for file in base_path.iterdir():
+            if file.suffix == '.lua':
+                cases.append(file.stem)
+
+        return cases
+    
+
+    """
+    Load a Quanty case)
+
+    ----------------
+    Parameters:
+    case: Name of the case to load (pattern: {point_group}_{orbitals})
+    manual: If True, the manual for the case is displayed (list of parameters available for fitting)
+    """    
+    def load_case(self, case, manual=False):
+        base_path = impresources.files(cases)
+        case_path = base_path / f"{case}.lua"
+        if not case_path.exists():
+            raise ValueError(f"Case {case} not found")
+        self.quanty_file = case_path
+
+        if manual:
+            manual_path = base_path / f"{case}.txt"
+            if manual_path.exists():
+                print(f"Case {case} loaded")
+                print(f'The following parameters are available for fitting of {case}')
+                with open(manual_path) as f:
+                    print(f.read())
+            else:
+                print(f"Case {case} loaded, but no manual available")
+            
+
+
+    """
+    Load a custom Quanty case from a file
+
+    ----------------
+    Parameters:
+    case_file: Path to the Quanty case file
+    """
+    def load_custom_case(self, case_file):
+        if not isfile(case_file):
+            raise ValueError(f"File {case_file} not found")
+        self.quanty_file = case_file
+
+
+
     """
     Add a parameter to the model
 
@@ -355,12 +413,11 @@ class QuantyLF:
     ----------------
     Parameters:
     type: "XAS" or "RIXS"
-    gamma: Guassian broadening parameter (will only be used for 'XAS' type)
+    gamma: Guassian broadening parameter
     lorenzians: List of lorenzian broadening parameters (center, width)
     """
     def add_broadening(self, type, lorenzians, gamma=0):
-        if type == "XAS":
-            self.add_par(type + "_Gamma", gamma)
+        self.add_par(type + "_Gamma", gamma)
         for lorenzian in lorenzians:
             val = f'{lorenzian[0]} {lorenzian[1]}'
             self.add_par(type + "_Broad", val, from_file=False)

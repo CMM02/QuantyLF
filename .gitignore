@@ -161,7 +161,6 @@ cython_debug/
 #.idea/
 
 junit/
-local-QuantyLF.py
 RIXS_Calc.dat
 RIXS_Exp_Trimmed.dat
 RIXS_Exp.dat

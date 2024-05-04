@@ -18,7 +18,7 @@ import pickle
 
 import matplotlib.pyplot as plt
 
-QuantyFile = "/Users/phr542/Documents/Packages/QuantyLF/src/QuantyLF/quanty/LF_3d_Td.lua"
+QuantyFile = "./src/QuantyLF/quanty/LF_3d_Td.lua"
 
 
 class QuantyLF:
@@ -75,6 +75,7 @@ class QuantyLF:
         self.edge_jump_interp = interp1d(x_range, edge_jump_y, kind='cubic', fill_value="extrapolate")
 
         if display:
+            print("Displaying edge jump, this option has to be disabled for batch runs!")
             if self.expXAS is None:
                 print("To display edge jump with experimental XAS, load the experimental XAS first")
             else:
@@ -332,7 +333,9 @@ class QuantyLF:
     def add_par(self, name, init_val, interv = None, from_file = True):
         if interv and (interv[1] - interv[0]) < 0:
             raise ValueError("Upper bound of parameter should be greater than lower bound")
-        
+        if interv and (init_val < interv[0] or init_val > interv[1]):
+            raise ValueError("Initial value of parameter should be within the bounds")
+
         low = 0
         high = 0
         if interv:
@@ -345,6 +348,22 @@ class QuantyLF:
                 init_val = self.file_par_dict[name] if from_file else init_val
         self.par_list.append([name, init_val, low, high, 1 if interv else 0])
 
+
+    """
+    Add broadening to the XAS or RIXS data
+
+    ----------------
+    Parameters:
+    type: "XAS" or "RIXS"
+    gamma: Guassian broadening parameter (will only be used for 'XAS' type)
+    lorenzians: List of lorenzian broadening parameters (center, width)
+    """
+    def add_broadening(self, type, lorenzians, gamma=0):
+        if type == "XAS":
+            self.add_par(type + "_Gamma", gamma)
+        for lorenzian in lorenzians:
+            val = f'{lorenzian[0]} {lorenzian[1]}'
+            self.add_par(type + "_Broad", val, from_file=False)
 
     """
     Fit the parameters of the model to the experimental data

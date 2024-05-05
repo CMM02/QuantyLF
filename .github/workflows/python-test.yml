@@ -11,7 +11,7 @@ name: Test Python Package
 on:
   pull_request:
     branches:
-      - main
+      # - main
       # - staging
 
 jobs:

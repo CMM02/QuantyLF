@@ -2,6 +2,7 @@ from QuantyLF.QuantyLF import QuantyLF
 
 
 qunatyLF = QuantyLF()
+qunatyLF.set_quanty_command('/Users/phr542/Documents/Quanty/Quanty_macOS')
 
 qunatyLF.load_exp_xas('XAS_Exp.dat')
 qunatyLF.load_exp_rixs('RIXS_Exp.dat', [638, 639.35, 640.16, 640.75])

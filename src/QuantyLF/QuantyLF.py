@@ -296,11 +296,16 @@ class QuantyLF:
     """
     Configure the edge jump for the XAS calculation. The edge jump is modelled as a arctan function.
 
-    Parameters:
-    edge_jumps: List of edge jumps. Each element in the list is a list of 3 elements: [position, jump, slope]
-    x_range: The range of x values to model the edge jump over
-    y_offset: The y offset of the edge jump
-    display: If True, the edge jump will be displayed along with the experimental XASs
+    Parameters
+    ----------
+    edge_jumps: list of 3-element lists
+        List of edge jumps. Each element in the list is a list of 3 elements: [position, jump, slope]
+    x_range: list of floats
+        The range of x values to model the edge jump over
+    y_offset: float, optional
+        The y offset of the edge jump
+    display: bool, optional
+        If True, the edge jump will be displayed along with the experimental XASs
     """
     def config_edge_jump(self, edge_jumps, x_range, y_offset=0, display=False):
         x_range = np.linspace(x_range[0], x_range[1], math.ceil((max(x_range)-min(x_range))/0.1))
@@ -323,8 +328,8 @@ class QuantyLF:
     """
     Return the available cases for which the Quanty calculations are available
 
-    ----------------
-    Returns:
+    Returns
+    -------
     List of available cases
     """
     def available_cases(self):
@@ -338,12 +343,14 @@ class QuantyLF:
     
 
     """
-    Load a Quanty case)
+    Load a Quanty case
 
-    ----------------
-    Parameters:
-    case: Name of the case to load (pattern: {point_group}_{orbitals})
-    manual: If True, the manual for the case is displayed (list of parameters available for fitting)
+    Parameters
+    ----------
+    case: str
+        Name of the case to load (pattern: {point_group}_{orbitals})
+    manual: bool, optional
+        If True, the manual for the case is displayed (list of parameters available for fitting)
     """    
     def load_case(self, case, manual=False):
         base_path = impresources.files(cases)
@@ -367,9 +374,10 @@ class QuantyLF:
     """
     Load a custom Quanty case from a file
 
-    ----------------
-    Parameters:
-    case_file: Path to the Quanty case file
+    Parameters
+    ----------
+    case_file: str
+        Path to the Quanty case file
     """
     def load_custom_case(self, case_file):
         if not isfile(case_file):
@@ -381,12 +389,16 @@ class QuantyLF:
     """
     Add a parameter to the model
 
-    ----------------
-    Parameters:
-    name: Name of the parameter
-    init_val: Initial value of the parameter
-    interv: List of two values, lower and upper bounds of the parameter
-    from_file: If True (default True), the parameter is read from a file (file value overrides init_val)
+    Parameters
+    ----------
+    name: str
+        Name of the parameter
+    init_val: float
+        Initial value of the parameter
+    interv: list of 2 floats, optional
+        List of two values, lower and upper bounds of the parameter
+    from_file: bool, optional
+        If True (default True), the parameter is read from a file (file value overrides init_val)
     """
     def add_par(self, name, init_val, interv = None, from_file = True):
         if interv and (interv[1] - interv[0]) < 0:
@@ -410,11 +422,14 @@ class QuantyLF:
     """
     Add broadening to the XAS or RIXS data
 
-    ----------------
-    Parameters:
-    type: "XAS" or "RIXS"
-    gamma: Guassian broadening parameter
-    lorenzians: List of lorenzian broadening parameters (center, width)
+    Parameters
+    ----------
+    type: str
+        "XAS" or "RIXS"
+    lorenzians: list of 2-element lists
+        List of lorenzian broadening parameters (center, width)
+    gamma: float, optional
+        Guassian broadening parameter
     """
     def add_broadening(self, type, lorenzians, gamma=0):
         self.add_par(type + "_Gamma", gamma)
@@ -425,9 +440,10 @@ class QuantyLF:
     """
     Fit the parameters of the model to the experimental data
 
-    ----------------
-    Parameters:
-    mode: "XAS" or "RIXS". If "XAS", only the XAS data is fitted. If "RIXS", both XAS and RIXS data is fitted
+    Parameters
+    ----------
+    mode: str
+        "XAS" or "RIXS". If "XAS", only the XAS data is fitted. If "RIXS", both XAS and RIXS data is fitted
     """
     def fit(self, type):        
         self.__fit_pars__(type)
@@ -435,9 +451,10 @@ class QuantyLF:
     """
     Load the experimental XAS data from a file (no header, two columns: energy, intensity)
 
-    ----------------
-    Parameters:
-    path: Path to the file containing the experimental XAS data
+    Parameters
+    ----------
+    path: str
+        Path to the file containing the experimental XAS data
     """
     def load_exp_xas(self, path):
         self.expXAS = np.loadtxt(path)
@@ -446,10 +463,12 @@ class QuantyLF:
     """
     Load the experimental RIXS data from a file (no header, first row: resonance energies, rest of the rows: energy, intensity)
 
-    ----------------
-    Parameters:
-    path: Path to the file containing the experimental RIXS data
-    RIXS_energies: List of resonance energies for which the RIXS data is available
+    Parameters
+    ----------
+    path: str   
+        Path to the file containing the experimental RIXS data
+    RIXS_energies: list of floats
+        List of resonance energies for which the RIXS data is available
     """
     def load_exp_rixs(self, path, RIXS_energies):        
         for RIXS_energy in RIXS_energies:
@@ -469,12 +488,14 @@ class QuantyLF:
 
 
     """
-    Set the path to the Quanty executable
+    Set the path to the Quanty executable (default is 'Quanty' added to path)
 
-    ----------------
-    Parameters:
-    command: Path to the Quanty executable
-    platform: Platform for which the path is being set, if not set the current platform is used
+    Parameters
+    ----------
+    command: str
+        Path to the Quanty executable
+    platform: str, optional
+        Platform for which the path is being set (if not set the current platform is used)
     """
     def set_quanty_command(self, command, for_platform=None):
         if for_platform is None:
@@ -484,10 +505,12 @@ class QuantyLF:
 
     """
     Set custom path to the parameter file (default: ParVals.txt)
+    !Warning: Should not be changed for default cases!
 
-    ----------------
-    Parameters:
-    par_file: Path to the parameter file
+    Parameters
+    ----------
+    par_file: str
+        Path to the parameter file
     """
     def set_par_file(self, par_file):
         self.par_file = par_file

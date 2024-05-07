@@ -5,8 +5,8 @@ tenDq - Splitting of d-orbitals in an octahedral field, differentiating between 
 tenDqF
 Ds
 Dt
-DsFs
-DtFs
+DsF
+DtF
 zeta_2p
 zeta_3d
 Xzeta_3d

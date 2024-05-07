@@ -54,7 +54,7 @@ quantyLF.load_exp_rixs('RIXS_Exp.dat', [638, 639.35])
 quantyLF.config_edge_jump([[637.7, 0.14, 4], [648.2, 0.006, 8]], [600, 700,], display=False)
 
 # see available cases
-print(qunatyLF.available_cases())
+print(quantyLF.available_cases())
 # load case and print parameters for fitting
 quantyLF.load_case('D3h_3d', manual=True)
 

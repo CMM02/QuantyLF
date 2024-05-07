@@ -9,7 +9,7 @@ qunatyLF.load_exp_rixs('RIXS_Exp.dat', [638, 639.35, 640.16, 640.75])
 
 qunatyLF.config_edge_jump([[637.7, 0.14, 4], [648.2, 0.006, 8]], [600, 700,], display=False)
 
-# print(qunatyLF.available_cases())
+print(qunatyLF.available_cases())
 qunatyLF.load_case('D3h_3d', manual=True)
 # qunatyLF.load_custom_case('./src/QuantyLF/cases/Td_3d.lua')
 

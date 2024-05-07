@@ -473,11 +473,13 @@ class QuantyLF:
 
     ----------------
     Parameters:
-    platform: Platform for which the path is being set
     command: Path to the Quanty executable
+    platform: Platform for which the path is being set, if not set the current platform is used
     """
-    def set_quanty_command(self, command, platform='default'):
-        self.quanty_command[platform] = command
+    def set_quanty_command(self, command, for_platform=None):
+        if for_platform is None:
+            for_platform = platform.system()
+        self.quanty_command[for_platform] = command
 
 
     """

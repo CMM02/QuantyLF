@@ -1,8 +1,12 @@
 ion - coordination number of central ion
 oxy - oxidation state of central ion
 Gamma1
-tenDq - Splitting of d-orbitals in an octahedral field, differentiating between e_g and t_ 2g orbitals. 
+tenDq - Splitting of d-orbitals in an octahedral field, differentiating between e_g and t_2g orbitals. 
 tenDqF
+Ds
+Dt
+DsFs
+DtFs
 zeta_2p
 zeta_3d
 Xzeta_3d

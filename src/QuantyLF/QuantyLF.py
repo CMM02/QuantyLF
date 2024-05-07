@@ -329,12 +329,12 @@ class QuantyLF:
     """
     def available_cases(self):
         base_path = impresources.files(cases)
-        cases = []
+        available_cases = []
         for file in base_path.iterdir():
             if file.suffix == '.lua':
-                cases.append(file.stem)
+                available_cases.append(file.stem)
 
-        return cases
+        return available_cases
     
 
     """

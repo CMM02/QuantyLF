@@ -216,8 +216,8 @@ class QuantyLF:
             calcRIXS2 = np.copy(self.expRIXS)
             for i in range(len(calcRIXS2[0,:])-1):
                 calcRIXS2[:,i+1] = np.interp(self.expRIXS[:,0],calcRIXS[:,0],calcRIXS[:,i+1])
-                calcRIXSCat = np.copy(calcRIXS2[:,1])
-                expRIXSCat = np.copy(self.expRIXS[:,1])
+            calcRIXSCat = np.copy(calcRIXS2[:,1])
+            expRIXSCat = np.copy(self.expRIXS[:,1])
             for i in range(len(calcRIXS[0,:])-2):
                 calcRIXSCat = np.hstack((calcRIXSCat,calcRIXS2[:,i+2]))
                 expRIXSCat = np.hstack((expRIXSCat,self.expRIXS[:,i+2]))
@@ -471,11 +471,17 @@ class QuantyLF:
         List of resonance energies for which the RIXS data is available
     """
     def load_exp_rixs(self, path, RIXS_energies):        
-        for RIXS_energy in RIXS_energies:
-            self.add_par("RIXS",RIXS_energy,from_file=False)
-        
         #load exp RIXS. For experimental, the first row are the resonance energies
         expRIXS = np.loadtxt(path)
+        energies = expRIXS[0,:]
+        if energies[0] != 0:
+            raise ValueError("First value of the first row should be 0, as it is the energy axis for the RIXS data")
+        for i in range(len(RIXS_energies)):
+            if RIXS_energies[i] != energies[i+1]:
+                raise ValueError(f"Resonant energy {RIXS_energies[i]} not found in the experimental RIXS data. First row should contain the resonance energies")
+
+        for RIXS_energy in RIXS_energies:
+            self.add_par("RIXS",RIXS_energy,from_file=False)
         
         #trim the exp RIXS just to have the columns with resonant energies we are calculating
         indices = [0] #0th column is energy, which we will keep

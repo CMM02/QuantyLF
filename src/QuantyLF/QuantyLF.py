@@ -467,18 +467,25 @@ class QuantyLF:
     ----------
     path: str   
         Path to the file containing the experimental RIXS data
-    RIXS_energies: list of floats
-        List of resonance energies for which the RIXS data is available
+    RIXS_energies: list of floats, optional
+        List of resonance energies for which the RIXS data is available (if not provided, the first row of the file is used to extract the resonance energies)
     """
-    def load_exp_rixs(self, path, RIXS_energies):        
+    def load_exp_rixs(self, path, RIXS_energies=None):        
         #load exp RIXS. For experimental, the first row are the resonance energies
         expRIXS = np.loadtxt(path)
         energies = expRIXS[0,:]
         if energies[0] != 0:
-            raise ValueError("First value of the first row should be 0, as it is the energy axis for the RIXS data")
-        for i in range(len(RIXS_energies)):
-            if RIXS_energies[i] != energies[i+1]:
-                raise ValueError(f"Resonant energy {RIXS_energies[i]} not found in the experimental RIXS data. First row should contain the resonance energies")
+            raise ValueError("First value of the first row should be 0, as it is the energy axis for the RIXS data")        
+        if RIXS_energies is None:
+            RIXS_energies = energies[1:]
+        else:
+            # check if number rixs energies is equal to number of columns in expRIXS
+            if len(RIXS_energies) != len(expRIXS[1,:])-1:
+                raise ValueError("Number of RIXS energies does not match the number of columns in the experimental RIXS data")
+            # check if the rixs energies match energies in the first row of the expRIXS
+            for i in range(len(RIXS_energies)):
+                if RIXS_energies[i] != energies[i+1]:
+                    raise ValueError(f"Resonant energy {RIXS_energies[i]} not found in the experimental RIXS data. First row should contain the resonance energies")
 
         for RIXS_energy in RIXS_energies:
             self.add_par("RIXS",RIXS_energy,from_file=False)

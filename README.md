@@ -47,7 +47,7 @@ quantyLF.set_quanty_command('../Quanty_macOS', 'Darwin')
 
 # load experimental data including excitation energies
 quantyLF.load_exp_xas('XAS_Exp.dat')
-quantyLF.load_exp_rixs('RIXS_Exp.dat', [638, 639.35])
+quantyLF.load_exp_rixs('RIXS_Exp.dat')
 
 # configure edge jump
 # set display to True to see a plot of experimental data along edge jump (display has to be set to false for calculation)
@@ -284,8 +284,8 @@ Parameters
 ----------
 path: str   
     Path to the file containing the experimental RIXS data
-RIXS_energies: list of floats
-    List of resonance energies for which the RIXS data is available
+RIXS_energies: list of floats, optional
+    List of resonance energies for which the RIXS data is available (if not provided, the first row of the file is used to extract the resonance energies)
 """
 load_exp_rixs(path, RIXS_energies)
 ```

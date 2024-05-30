@@ -8,7 +8,7 @@ quantyLF.set_quanty_command('/Users/phr542/Documents/Quanty/Quanty_macOS', 'Darw
 
 # load experimental data including excitation energies
 quantyLF.load_exp_xas('XAS_Exp.dat')
-quantyLF.load_exp_rixs('RIXS_Exp.dat', [637.85, 639.2, 640.01, 640.6])
+quantyLF.load_exp_rixs('RIXS_Exp.dat')
 
 # configure edge jump
 # set display to True to see a plot of experimental data along edge jump (display has to be set to false for calculation)

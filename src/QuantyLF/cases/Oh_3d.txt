@@ -1,6 +1,7 @@
 ion - coordination number of central ion
 oxy - oxidation state of central ion
 Gamma1
+Hex
 tenDq - Splitting of d-orbitals in an octahedral field, differentiating between e_g and t_2g orbitals. 
 tenDqF
 zeta_2p

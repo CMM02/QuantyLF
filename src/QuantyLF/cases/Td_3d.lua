@@ -27,7 +27,6 @@ TimeStart("LF_RIXS")
 -- as the RIXS scattering. We then can use this effective operator to calculate the dispersive
 -- magnons using linear spin-wave theory. (Or any other level of theory you want)
 -- The local moment is alligned in the cluster due to an exchange field
-Hex = 0 -- 6*0.084--0.027
 HexDir = {1, 1, 1}
 
 -- We calculate the resonant energy dependence in the following window.
@@ -104,6 +103,7 @@ Va1g = 0
 Veg = 0
 
 -- setup initial parameters for fitting values to initialize variables
+Hex = 0
 tenDq = 1
 tenDqFs = 0
 VfScale = 1
@@ -118,6 +118,9 @@ for i = 1, #pars do
     end
     if (pars[i].name == "VfScale") then
         VfScale = pars[i].val
+    end
+    if (pars[i].name == "Hex") then
+        Hex = pars[i].val
     end
 end
 tenDqF = tenDqFs * tenDq

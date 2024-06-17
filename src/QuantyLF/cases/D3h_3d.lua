@@ -1,9 +1,12 @@
 -- import slater integral values
 function addRelPath(dir)
-    local spath = debug.getinfo(1, 'S').source:sub(2):gsub("^([^/])", "./%1"):gsub("[^/]*$", "")
+    local spath_unix = debug.getinfo(1, 'S').source:sub(2):gsub("^([^/])", "./%1"):gsub("[^/]*$", "")
+    print(spath_unix)
+    local spath_win = debug.getinfo(1, 'S').source:sub(2):match("(.*[/\\])")
     dir = dir and (dir .. "/") or ""
-    spath = spath .. dir
-    package.path = spath .. "?.lua;" .. spath .. "?/init.lua" .. package.path
+    spath_unix = spath_unix .. dir
+    spath_win = spath_win .. dir
+    package.path = spath_unix .. "?.lua;" .. spath_unix .. "?/init.lua;" .. spath_win .. "?.lua;" .. spath_win .. "?/init.lua;" .. package.path
 end
 
 addRelPath('utils')

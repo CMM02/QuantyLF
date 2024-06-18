@@ -143,17 +143,15 @@ for i = 1, #pars do
         Hex = pars[i].val
     end
 end
--- square planar Z axis have no electron interaction
--- axial distortion dt is zero.
-Dt = 0
+
 tenDqF = tenDqFs * tenDq
 DsF = DsFs * Ds
 DtF = DtFs * Dt
--- https://en.wikipedia.org/wiki/Square_planar_molecular_geometry
-Vb1g = 6 * tenDq + 2 * Ds - Dt
-Veg = 6 * tenDq - 2 * Ds - 6 * Dt
-Va1g = -4 * tenDq + 2 * Ds - Dt
-Vb2g = -4 * tenDq + Ds + 4 * Dt
+
+Vb1g = 0.6 * tenDq + 2 * Ds - Dt
+Va1g = 0.6 * tenDq - 2 * Ds - 6 * Dt
+Vb2g = -0.4 * tenDq + 2 * Ds - Dt
+Veg = -0.4 * tenDq - Ds + 4 * Dt
 
 Vb1gF = Vb1g * VfScale
 Va1gF = Va1g * VfScale

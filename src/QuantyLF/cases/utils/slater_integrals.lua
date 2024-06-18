@@ -26,10 +26,32 @@ function get_slater_integrals(ion, oxy)
     elseif ion == 28 then
         if oxy == 2 then
             nd = 8
+            zeta_3d = 0.083;
+            F2dd = 12.234; --- Thesis de Groot
+            F4dd = 7.598 --- Thesis de Groot
+            zeta_2p = 11.507; --- Thesis de Groot
+            F2pd = 7.721; --- Thesis de Groot
+            G1pd = 5.787; --- Thesis de Groot
+            G3pd = 3.291 --- Thesis de Groot
+            Xzeta_3d = 0.102; --- Thesis de Groot
+            XF2dd = 13.005;
+            XF4dd = 8.084
         elseif oxy == 3 then
             nd = 7
+            zeta_3d = 0.083;
+            F2dd = 13.277; --- Thesis de Groot
+            F4dd = 8.295; --- Thesis de Groot
+            zeta_2p = 11.506; --- Thesis de Groot
+            F2pd = 8.350; --- Thesis de Groot
+            G1pd = 6.332; --- Thesis de Groot
+            G3pd = 3.603 --- Thesis de Groot
+            Xzeta_3d = 0.112; --- Thesis de Groot
+            XF2dd = 14.022; --- Thesis de Groot
+            XF4dd = 8.764 --- Thesis de Groot
         elseif oxy == 4 then
             nd = 6
+            print("No data available for this ion and valence configuration...")
+            os.exit()
         end
         zeta_3d = 0.083;
         F2dd = 12.233;
@@ -45,119 +67,137 @@ function get_slater_integrals(ion, oxy)
     elseif ion == 27 then
         if oxy == 2 then
             nd = 7
+            zeta_3d = 0.066;
+            F2dd = 11.605; --- Thesis de Groot
+            F4dd = 7.209 --- Thesis de Groot
+            zeta_2p = 9.746; --- Thesis de Groot
+            F2pd = 7.260; --- Thesis de Groot
+            G1pd = 5.397; --- Thesis de Groot
+            G3pd = 3.069 --- Thesis de Groot
+            Xzeta_3d = 0.092; --- Thesis de Groot
+            XF2dd = 12.396; --- Thesis de Groot
+            XF4dd = 7.708 --- Thesis de Groot
         elseif oxy == 3 then
             nd = 6
+            zeta_3d = 0.066;
+            F2dd = 12.663; --- Thesis de Groot
+            F4dd = 7.917 --- Thesis de Groot
+            zeta_2p = 9.748; --- Thesis de Groot
+            F2pd = 7.900; --- Thesis de Groot
+            G1pd = 5.961; --- Thesis de Groot
+            G3pd = 3.386 --- Thesis de Groot
+            Xzeta_3d = 0.082; --- Thesis de Groot
+            XF2dd = 13.422; --- Thesis de Groot
+            XF4dd = 78.395 --- Thesis de Groot
         elseif oxy == 4 then
             nd = 5
+            print("No data available for this ion and valence configuration...")
+            os.exit()
         end
-        zeta_3d = 0.066;
-        F2dd = 11.604;
-        F4dd = 7.209
-        zeta_2p = 9.748;
-        F2pd = 7.259;
-        G1pd = 5.394;
-        G3pd = 3.068
-        Xzeta_3d = 0.083;
-        XF2dd = 12.395;
-        XF4dd = 7.707
 
     elseif ion == 26 then
         if oxy == 2 then
             nd = 6
             zeta_3d = 0.052;
-            F2dd = 10.965;
-            F4dd = 6.815
-            zeta_2p = 8.200;
-            F2pd = 6.792;
-            G1pd = 5.0;
-            G3pd = 2.843
-            Xzeta_3d = 0.067;
-            XF2dd = 11.778;
-            XF4dd = 7.327
+            F2dd = 10.966; --- Thesis de Groot
+            F4dd = 6.815 --- Thesis de Groot
+            zeta_2p = 8.200; --- Thesis de Groot
+            F2pd = 6.793; --- Thesis de Groot
+            G1pd = 5.004; --- Thesis de Groot
+            G3pd = 2.844 --- Thesis de Groot
+            Xzeta_3d = 0.067; --- Thesis de Groot
+            XF2dd = 11.779; --- Thesis de Groot
+            XF4dd = 7.327 --- Thesis de Groot
         elseif oxy == 3 then
             nd = 5
             zeta_3d = 0.059;
-            F2dd = 12.043;
-            F4dd = 7.535
-            zeta_2p = 8.199;
-            F2pd = 7.446;
-            G1pd = 5.566;
-            G3pd = 3.166
-            Xzeta_3d = 0.074;
-            XF2dd = 12.818;
-            XF4dd = 8.023
+            F2dd = 12.043; --- Thesis de Groot
+            F4dd = 7.535 --- Thesis de Groot
+            zeta_2p = 8.199; --- Thesis de Groot
+            F2pd = 7.446; --- Thesis de Groot
+            G1pd = 5.566; --- Thesis de Groot
+            G3pd = 3.166 --- Thesis de Groot
+            Xzeta_3d = 0.074; --- Thesis de Groot
+            XF2dd = 12.818; --- Thesis de Groot
+            XF4dd = 8.023 --- Thesis de Groot
         elseif oxy == 4 then
             nd = 4
+            print("No data available for this ion and valence configuration...")
+            os.exit()
         end
 
     elseif ion == 25 then
         if oxy == 2 then
             nd = 5
             zeta_3d = 0.040;
-            F2dd = 10.315;
-            F4dd = 6.413
-            zeta_2p = 6.846;
-            F2pd = 6.320;
-            G1pd = 4.603;
-            G3pd = 2.617
-            Xzeta_3d = 0.053;
-            XF2dd = 11.154;
-            XF4dd = 6.942
+            F2dd = 10.316; --- Thesis de Groot
+            F4dd = 6.414 --- Thesis de Groot
+            zeta_2p = 6.846; --- Thesis de Groot
+            F2pd = 6.321; --- Thesis de Groot
+            G1pd = 4.606; --- Thesis de Groot
+            G3pd = 2.618 --- Thesis de Groot
+            Xzeta_3d = 0.053; --- Thesis de Groot
+            XF2dd = 11.155; --- Thesis de Groot
+            XF4dd = 6.943 --- Thesis de Groot
         elseif oxy == 3 then
             nd = 4
             zeta_3d = 0.046;
-            F2dd = 11.415;
-            F4dd = 7.148;
-            zeta_2p = 6.845;
-            F2pd = 6.988;
-            G1pd = 5.179;
-            G3pd = 2.945;
-            Xzeta_3d = 0.059;
-            XF2dd = 12.210;
-            XF4dd = 7.649
+            F2dd = 11.415; --- Thesis de Groot
+            F4dd = 7.148; --- Thesis de Groot
+            zeta_2p = 6.845; --- Thesis de Groot
+            F2pd = 6.988; --- Thesis de Groot
+            G1pd = 5.179; --- Thesis de Groot
+            G3pd = 2.945; --- Thesis de Groot
+            Xzeta_3d = 0.059; --- Thesis de Groot
+            XF2dd = 12.210; --- Thesis de Groot
+            XF4dd = 7.649 --- Thesis de Groot
         elseif oxy == 4 then
             nd = 3
             zeta_3d = 0.052;
-            F2dd = 12.416;
-            F4dd = 7.820;
-            zeta_2p = 6.845;
-            F2pd = 7.658;
-            G1pd = 5.776;
-            G3pd = 3.288
-            Xzeta_3d = 0.066;
-            XF2dd = 13.177;
-            XF4dd = 8.299;
+            F2dd = 12.416; --- Thesis de Groot
+            F4dd = 7.820; --- Thesis de Groot
+            zeta_2p = 6.845; --- Thesis de Groot
+            F2pd = 7.658; --- Thesis de Groot
+            G1pd = 5.776; --- Thesis de Groot
+            G3pd = 3.288 --- Thesis de Groot
+            Xzeta_3d = 0.066; --- Thesis de Groot
+            XF2dd = 13.177; --- Thesis de Groot
+            XF4dd = 8.299; --- Thesis de Groot
         elseif oxy == 7 then
             nd = 2
+            print("No data available for this ion and valence configuration...")
+            os.exit()
         end
 
     elseif ion == 24 then
         if oxy == 2 then
             nd = 4
             zeta_3d = 0.030;
-            F2dd = 9.469;
-            F4dd = 6.002
-            zeta_2p = 5.668;
-            F2pd = 5.841;
-            G1pd = 4.204;
-            G3pd = 2.388
-            Xzeta_3d = 0.041;
-            XF2dd = 10.521;
-            XF4dd = 6.522
+            F2dd = 9.649; --- Thesis de Groot
+            F4dd = 6.002 --- Thesis de Groot
+            zeta_2p = 5.668; --- Thesis de Groot
+            F2pd = 5.841; --- Thesis de Groot
+            G1pd = 4.204; --- Thesis de Groot
+            G3pd = 2.388 --- Thesis de Groot
+            Xzeta_3d = 0.041; --- Thesis de Groot
+            XF2dd = 10.522; --- Thesis de Groot
+            XF4dd = 6.552 --- Thesis de Groot
         elseif oxy == 3 then
             nd = 3
             zeta_3d = 0.035;
-            F2dd = 10.777;
-            F4dd = 6.755
-            zeta_2p = 5.667;
-            F2pd = 6.526;
-            G1pd = 4.788;
-            G3pd = 2.722
-            Xzeta_3d = 0.047;
-            XF2dd = 11.596;
-            XF4dd = 7.270
+            F2dd = 10.777; --- Thesis de Groot
+            F4dd = 6.755 --- Thesis de Groot
+            zeta_2p = 5.667; --- Thesis de Groot
+            F2pd = 6.526; --- Thesis de Groot
+            G1pd = 4.788; --- Thesis de Groot
+            G3pd = 2.722 --- Thesis de Groot
+            Xzeta_3d = 0.047; --- Thesis de Groot
+            XF2dd = 11.596; --- Thesis de Groot
+            XF4dd = 7.270 --- Thesis de Groot
         elseif oxy == 4 then
             nd = 2
+            print("No data available for this ion and valence configuration...")
+            os.exit()
         end
 
     elseif ion == 23 then

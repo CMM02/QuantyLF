@@ -26,7 +26,7 @@ function get_slater_integrals(ion, oxy)
     elseif ion == 28 then
         if oxy == 2 then
             nd = 8
-            zeta_3d = 0.083;
+            zeta_3d = 0.083; --- Crispy
             F2dd = 12.234; --- Thesis de Groot
             F4dd = 7.598 --- Thesis de Groot
             zeta_2p = 11.507; --- Thesis de Groot
@@ -38,7 +38,7 @@ function get_slater_integrals(ion, oxy)
             XF4dd = 8.084
         elseif oxy == 3 then
             nd = 7
-            zeta_3d = 0.083;
+            zeta_3d = 0.091; --- Crispy
             F2dd = 13.277; --- Thesis de Groot
             F4dd = 8.295; --- Thesis de Groot
             zeta_2p = 11.506; --- Thesis de Groot
@@ -48,26 +48,14 @@ function get_slater_integrals(ion, oxy)
             Xzeta_3d = 0.112; --- Thesis de Groot
             XF2dd = 14.022; --- Thesis de Groot
             XF4dd = 8.764 --- Thesis de Groot
-        elseif oxy == 4 then
-            nd = 6
-            print("No data available for this ion and valence configuration...")
-            os.exit()
         end
-        zeta_3d = 0.083;
-        F2dd = 12.233;
-        F4dd = 7.597
-        zeta_2p = 11.507;
-        F2pd = 7.720;
-        G1pd = 5.783;
-        G3pd = 3.290
-        Xzeta_3d = 0.102;
-        XF2dd = 13.005;
-        XF4dd = 8.084
+        print("No data available for this ion and valence configuration...")
+        os.exit()
 
     elseif ion == 27 then
         if oxy == 2 then
             nd = 7
-            zeta_3d = 0.066;
+            zeta_3d = 0.066; --- Crispy
             F2dd = 11.605; --- Thesis de Groot
             F4dd = 7.209 --- Thesis de Groot
             zeta_2p = 9.746; --- Thesis de Groot
@@ -79,7 +67,7 @@ function get_slater_integrals(ion, oxy)
             XF4dd = 7.708 --- Thesis de Groot
         elseif oxy == 3 then
             nd = 6
-            zeta_3d = 0.066;
+            zeta_3d = 0.074; --- Crispy
             F2dd = 12.663; --- Thesis de Groot
             F4dd = 7.917 --- Thesis de Groot
             zeta_2p = 9.748; --- Thesis de Groot
@@ -89,16 +77,14 @@ function get_slater_integrals(ion, oxy)
             Xzeta_3d = 0.082; --- Thesis de Groot
             XF2dd = 13.422; --- Thesis de Groot
             XF4dd = 78.395 --- Thesis de Groot
-        elseif oxy == 4 then
-            nd = 5
-            print("No data available for this ion and valence configuration...")
-            os.exit()
         end
+        print("No data available for this ion and valence configuration...")
+        os.exit()
 
     elseif ion == 26 then
         if oxy == 2 then
             nd = 6
-            zeta_3d = 0.052;
+            zeta_3d = 0.052; --- Crispy
             F2dd = 10.966; --- Thesis de Groot
             F4dd = 6.815 --- Thesis de Groot
             zeta_2p = 8.200; --- Thesis de Groot
@@ -110,7 +96,7 @@ function get_slater_integrals(ion, oxy)
             XF4dd = 7.327 --- Thesis de Groot
         elseif oxy == 3 then
             nd = 5
-            zeta_3d = 0.059;
+            zeta_3d = 0.059; --- Crispy
             F2dd = 12.043; --- Thesis de Groot
             F4dd = 7.535 --- Thesis de Groot
             zeta_2p = 8.199; --- Thesis de Groot
@@ -120,16 +106,14 @@ function get_slater_integrals(ion, oxy)
             Xzeta_3d = 0.074; --- Thesis de Groot
             XF2dd = 12.818; --- Thesis de Groot
             XF4dd = 8.023 --- Thesis de Groot
-        elseif oxy == 4 then
-            nd = 4
-            print("No data available for this ion and valence configuration...")
-            os.exit()
         end
+        print("No data available for this ion and valence configuration...")
+        os.exit()
 
     elseif ion == 25 then
         if oxy == 2 then
             nd = 5
-            zeta_3d = 0.040;
+            zeta_3d = 0.040; --- Crispy
             F2dd = 10.316; --- Thesis de Groot
             F4dd = 6.414 --- Thesis de Groot
             zeta_2p = 6.846; --- Thesis de Groot
@@ -141,7 +125,7 @@ function get_slater_integrals(ion, oxy)
             XF4dd = 6.943 --- Thesis de Groot
         elseif oxy == 3 then
             nd = 4
-            zeta_3d = 0.046;
+            zeta_3d = 0.046; --- Crispy
             F2dd = 11.415; --- Thesis de Groot
             F4dd = 7.148; --- Thesis de Groot
             zeta_2p = 6.845; --- Thesis de Groot
@@ -153,7 +137,7 @@ function get_slater_integrals(ion, oxy)
             XF4dd = 7.649 --- Thesis de Groot
         elseif oxy == 4 then
             nd = 3
-            zeta_3d = 0.052;
+            zeta_3d = 0.052; --- Crispy
             F2dd = 12.416; --- Thesis de Groot
             F4dd = 7.820; --- Thesis de Groot
             zeta_2p = 6.845; --- Thesis de Groot
@@ -163,16 +147,14 @@ function get_slater_integrals(ion, oxy)
             Xzeta_3d = 0.066; --- Thesis de Groot
             XF2dd = 13.177; --- Thesis de Groot
             XF4dd = 8.299; --- Thesis de Groot
-        elseif oxy == 7 then
-            nd = 2
-            print("No data available for this ion and valence configuration...")
-            os.exit()
         end
+        print("No data available for this ion and valence configuration...")
+        os.exit()
 
     elseif ion == 24 then
         if oxy == 2 then
             nd = 4
-            zeta_3d = 0.030;
+            zeta_3d = 0.030; --- Crispy
             F2dd = 9.649; --- Thesis de Groot
             F4dd = 6.002 --- Thesis de Groot
             zeta_2p = 5.668; --- Thesis de Groot
@@ -184,7 +166,7 @@ function get_slater_integrals(ion, oxy)
             XF4dd = 6.552 --- Thesis de Groot
         elseif oxy == 3 then
             nd = 3
-            zeta_3d = 0.035;
+            zeta_3d = 0.035; --- Crispy
             F2dd = 10.777; --- Thesis de Groot
             F4dd = 6.755 --- Thesis de Groot
             zeta_2p = 5.667; --- Thesis de Groot
@@ -194,11 +176,9 @@ function get_slater_integrals(ion, oxy)
             Xzeta_3d = 0.047; --- Thesis de Groot
             XF2dd = 11.596; --- Thesis de Groot
             XF4dd = 7.270 --- Thesis de Groot
-        elseif oxy == 4 then
-            nd = 2
-            print("No data available for this ion and valence configuration...")
-            os.exit()
         end
+        print("No data available for this ion and valence configuration...")
+        os.exit()
 
     elseif ion == 23 then
         if oxy == 2 then

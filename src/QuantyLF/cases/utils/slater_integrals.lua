@@ -48,9 +48,10 @@ function get_slater_integrals(ion, oxy)
             Xzeta_3d = 0.112; --- Thesis de Groot
             XF2dd = 14.022; --- Thesis de Groot
             XF4dd = 8.764 --- Thesis de Groot
+        else
+            print("No data available for this ion and valence configuration...")
+            os.exit()
         end
-        print("No data available for this ion and valence configuration...")
-        os.exit()
 
     elseif ion == 27 then
         if oxy == 2 then
@@ -77,9 +78,10 @@ function get_slater_integrals(ion, oxy)
             Xzeta_3d = 0.082; --- Thesis de Groot
             XF2dd = 13.422; --- Thesis de Groot
             XF4dd = 78.395 --- Thesis de Groot
+        else
+            print("No data available for this ion and valence configuration...")
+            os.exit()
         end
-        print("No data available for this ion and valence configuration...")
-        os.exit()
 
     elseif ion == 26 then
         if oxy == 2 then
@@ -106,9 +108,10 @@ function get_slater_integrals(ion, oxy)
             Xzeta_3d = 0.074; --- Thesis de Groot
             XF2dd = 12.818; --- Thesis de Groot
             XF4dd = 8.023 --- Thesis de Groot
+        else
+            print("No data available for this ion and valence configuration...")
+            os.exit()
         end
-        print("No data available for this ion and valence configuration...")
-        os.exit()
 
     elseif ion == 25 then
         if oxy == 2 then
@@ -147,9 +150,10 @@ function get_slater_integrals(ion, oxy)
             Xzeta_3d = 0.066; --- Thesis de Groot
             XF2dd = 13.177; --- Thesis de Groot
             XF4dd = 8.299; --- Thesis de Groot
+        else
+            print("No data available for this ion and valence configuration...")
+            os.exit()
         end
-        print("No data available for this ion and valence configuration...")
-        os.exit()
 
     elseif ion == 24 then
         if oxy == 2 then
@@ -176,9 +180,10 @@ function get_slater_integrals(ion, oxy)
             Xzeta_3d = 0.047; --- Thesis de Groot
             XF2dd = 11.596; --- Thesis de Groot
             XF4dd = 7.270 --- Thesis de Groot
+        else
+            print("No data available for this ion and valence configuration...")
+            os.exit()
         end
-        print("No data available for this ion and valence configuration...")
-        os.exit()
 
     elseif ion == 23 then
         if oxy == 2 then

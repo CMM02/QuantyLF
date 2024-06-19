@@ -6,7 +6,8 @@ function addRelPath(dir)
     dir = dir and (dir .. "/") or ""
     spath_unix = spath_unix .. dir
     spath_win = spath_win .. dir
-    package.path = spath_unix .. "?.lua;" .. spath_unix .. "?/init.lua;" .. spath_win .. "?.lua;" .. spath_win .. "?/init.lua;" .. package.path
+    package.path = spath_unix .. "?.lua;" .. spath_unix .. "?/init.lua;" .. spath_win .. "?.lua;" .. spath_win ..
+                       "?/init.lua;" .. package.path
 end
 
 addRelPath('utils')
@@ -412,13 +413,14 @@ res3d = "000000 1111111111 0000000000"
 resL = "000000 0000000000 1111111111"
 res2p = "111111 0000000000 0000000000"
 StartRestrictions = {NF, NB, {res3d, nd, nd}, {res2p, 6, 6}, {resL, 10, 10}}
+-- psiListEff = Eigensystem(HamiltonianEff, StartRestrictions, Npsi)
 psiList = Eigensystem(Hamiltonian, StartRestrictions, Npsi, {{"restrictions", {NF, NB, {res3d, nd, nd + 1}}}})
-oppList = {Hamiltonian, HExchange, OppSsqr, OppLsqr, OppJsqr, OppSz, OppLz, Oppldots_3d, OppNa1g, OppNeg, OppN_3d,
-           OppN_Ld, OppN_2p};
+oppList = {Hamiltonian, HExchange, OppSsqr, OppLsqr, OppJsqr, OppSz, OppLz, Oppldots_3d, OppNb1g, OppNa1g, OppNb2g,
+           OppNeg, OppN_3d, OppN_Ld, OppN_2p};
 print('\n');
 print('================================================================================================\n');
 print('Analysis of the initial Hamiltonian:\n');
-print(' <E>  <E_ex> <S^2> <L^2>   <J^2>  <S_z> <L_z>  <l.s> N_t2g N_eg N_3d   N_L N_2p');
+print(' <E>  <E_ex> <S^2> <L^2>   <J^2>  <S_z> <L_z>  <l.s> N_b1g N_a1g N_b2g N_eg N_3d   N_L N_2p');
 for i = 1, #psiList do
     for j = 1, #oppList do
         expectationvalue = Chop(psiList[i] * oppList[j] * psiList[i])

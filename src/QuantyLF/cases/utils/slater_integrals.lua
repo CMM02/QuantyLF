@@ -77,7 +77,7 @@ function get_slater_integrals(ion, oxy)
             G3pd = 3.386 --- Thesis de Groot
             Xzeta_3d = 0.082; --- Thesis de Groot
             XF2dd = 13.422; --- Thesis de Groot
-            XF4dd = 78.395 --- Thesis de Groot
+            XF4dd = 8.395 --- Thesis de Groot
         else
             print("No data available for this ion and valence configuration...")
             os.exit()

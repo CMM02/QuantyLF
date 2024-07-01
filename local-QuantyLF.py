@@ -17,7 +17,7 @@ quantyLF.config_edge_jump([[637.7, 0.14, 4], [648.2, 0.006, 8]], [600, 700,], di
 # see available cases
 # print(quantyLF.available_cases())
 # load case and print parameters for fitting
-quantyLF.load_case('Oh_3d', manual=False)
+quantyLF.load_case('Td_3d', manual=False)
 
 # Set up ion and oxidation state
 quantyLF.add_par('ion', 25, from_file=False)

@@ -102,8 +102,8 @@ end
 nd, zeta_3d, F2dd, F4dd, zeta_2p, F2pd, G1pd, G3pd, Xzeta_3d, XF2dd, XF4dd = get_slater_integrals(ion, oxy)
 
 -- Setup the hybridization
-Va1g = 0
-Veg = 0
+Ve = 0
+Vt2 = 0
 
 -- setup initial parameters for fitting values to initialize variables
 Hex = 0
@@ -128,11 +128,11 @@ for i = 1, #pars do
 end
 tenDqF = tenDqFs * tenDq
 
-Va1g = -0.6 * tenDq
-Veg = 0.4 * tenDq
+Ve = -0.6 * tenDq
+Vt2 = 0.4 * tenDq
 
-Va1gF = Va1g * VfScale
-VegF = Veg * VfScale
+VeF = Ve * VfScale
+Vt2F = Vt2 * VfScale
 
 OppSx_3d = NewOperator("Sx", NF, IndexUp_3d, IndexDn_3d);
 OppSy_3d = NewOperator("Sy", NF, IndexUp_3d, IndexDn_3d);
@@ -204,21 +204,21 @@ OppF2_3d = NewOperator("U", NF, IndexUp_3d, IndexDn_3d, {0, 1, 0});
 OppF4_3d = NewOperator("U", NF, IndexUp_3d, IndexDn_3d, {0, 0, 1});
 
 --- Crystal field operator for the d-shell
-Akm = PotentialExpandedOnClm("Oh", 2, {0.6, -0.4});
+Akm = PotentialExpandedOnClm("Td", 2, {0.6, -0.4});
 OpptenDq_3d = NewOperator("CF", NF, IndexUp_3d, IndexDn_3d, Akm)
 OpptenDq_Ld = NewOperator("CF", NF, IndexUp_Ld, IndexDn_Ld, Akm)
 
 -- define L-d interaction
 
-Akm = PotentialExpandedOnClm("Oh", 2, {1, 0});
-OppVa1g = NewOperator("CF", NF, IndexUp_3d, IndexDn_3d, IndexUp_Ld, IndexDn_Ld, Akm) +
-              NewOperator("CF", NF, IndexUp_Ld, IndexDn_Ld, IndexUp_3d, IndexDn_3d, Akm)
-Akm = PotentialExpandedOnClm("Oh", 2, {0, 1});
-OppVeg = NewOperator("CF", NF, IndexUp_3d, IndexDn_3d, IndexUp_Ld, IndexDn_Ld, Akm) +
-             NewOperator("CF", NF, IndexUp_Ld, IndexDn_Ld, IndexUp_3d, IndexDn_3d, Akm)
+Akm = PotentialExpandedOnClm("Td", 2, {1, 0});
+OppVe = NewOperator("CF", NF, IndexUp_3d, IndexDn_3d, IndexUp_Ld, IndexDn_Ld, Akm) +
+    	    NewOperator("CF", NF, IndexUp_Ld, IndexDn_Ld, IndexUp_3d, IndexDn_3d, Akm)
+Akm = PotentialExpandedOnClm("Td", 2, {0, 1});
+OppVt2 = NewOperator("CF", NF, IndexUp_3d, IndexDn_3d, IndexUp_Ld, IndexDn_Ld, Akm) +
+            NewOperator("CF", NF, IndexUp_Ld, IndexDn_Ld, IndexUp_3d, IndexDn_3d, Akm)
 
-OppNeg_Ld = NewOperator("CF", NF, IndexUp_Ld, IndexDn_Ld, Akm)
-OppNt2g_Ld = NewOperator("CF", NF, IndexUp_Ld, IndexDn_Ld, Akm)
+OppNe_Ld = NewOperator("CF", NF, IndexUp_Ld, IndexDn_Ld, Akm)
+OppNt2_Ld = NewOperator("CF", NF, IndexUp_Ld, IndexDn_Ld, Akm)
 
 OppNUp_2p = NewOperator("Number", NF, IndexUp_2p, IndexUp_2p, {1, 1, 1})
 OppNDn_2p = NewOperator("Number", NF, IndexDn_2p, IndexDn_2p, {1, 1, 1})
@@ -231,10 +231,10 @@ OppNDn_Ld = NewOperator("Number", NF, IndexDn_Ld, IndexDn_Ld, {1, 1, 1, 1, 1})
 OppN_Ld = OppNUp_Ld + OppNDn_Ld
 
 -- Number of electrons in each of the 3d orbitals
-Akm = PotentialExpandedOnClm("Oh", 2, {1, 0});
-OppNa1g = NewOperator("CF", NF, IndexUp_3d, IndexDn_3d, Akm)
-Akm = PotentialExpandedOnClm("Oh", 2, {0, 1});
-OppNeg = NewOperator("CF", NF, IndexUp_3d, IndexDn_3d, Akm)
+Akm = PotentialExpandedOnClm("Td", 2, {1, 0});
+OppNe= NewOperator("CF", NF, IndexUp_3d, IndexDn_3d, Akm)
+Akm = PotentialExpandedOnClm("Td", 2, {0, 1});
+OppNt2 = NewOperator("CF", NF, IndexUp_3d, IndexDn_3d, Akm)
 
 -- In order te describe the resonance we need the interaction on the 2p shell (spin-orbit)
 Oppcldots = NewOperator("ldots", NF, IndexUp_2p, IndexDn_2p);
@@ -356,12 +356,12 @@ HExchange = (Hex * HexDir[1] / HexDirNorm) * OppSx + (Hex * HexDir[2] / HexDirNo
                 (Hex * HexDir[3] / HexDirNorm) * OppSz
 
 Hamiltonian = HExchange + F0dd * OppF0_3d + F2dd * OppF2_3d + F4dd * OppF4_3d + tenDq * OpptenDq_3d + zeta_3d *
-                  Oppldots_3d + Bz * (2 * OppSz_3d + OppLz_3d) + Hz * OppSz_3d + tenDqL * OpptenDq_Ld + Veg * OppVeg +
-                  Va1g * OppVa1g + ed * OppN_3d + eL * OppN_Ld;
+                  Oppldots_3d + Bz * (2 * OppSz_3d + OppLz_3d) + Hz * OppSz_3d + tenDqL * OpptenDq_Ld + Ve * OppVe +
+                  Vt2 * OppVt2 + ed * OppN_3d + eL * OppN_Ld;
 
 XASHamiltonian = XF0dd * OppF0_3d + XF2dd * OppF2_3d + XF4dd * OppF4_3d + tenDqF * OpptenDq_3d + zeta_3d * Oppldots_3d +
-                     Bz * (2 * OppSz_3d + OppLz_3d) + Hz * OppSz_3d + tenDqL * OpptenDq_Ld + VegF * OppVeg + Va1gF *
-                     OppVa1g + edfinal * OppN_3d + eLfinal * OppN_Ld + epfinal * OppN_2p + zeta_2p * Oppcldots + F0pd *
+                     Bz * (2 * OppSz_3d + OppLz_3d) + Hz * OppSz_3d + tenDqL * OpptenDq_Ld + VeF * OppVe + Vt2F *
+                     OppVt2 + edfinal * OppN_3d + eLfinal * OppN_Ld + epfinal * OppN_2p + zeta_2p * Oppcldots + F0pd *
                      OppUpdF0 + F2pd * OppUpdF2 + G1pd * OppUpdG1 + G3pd * OppUpdG3;
 
 -- we now can create the lowest Npsi eigenstates:
@@ -375,12 +375,12 @@ res2p = "111111 0000000000 0000000000"
 StartRestrictions = {NF, NB, {res3d, nd, nd}, {res2p, 6, 6}, {resL, 10, 10}}
 -- psiListEff = Eigensystem(HamiltonianEff, StartRestrictions, Npsi)
 psiList = Eigensystem(Hamiltonian, StartRestrictions, Npsi, {{"restrictions", {NF, NB, {res3d, nd, nd + 1}}}})
-oppList = {Hamiltonian, HExchange, OppSsqr, OppLsqr, OppJsqr, OppSz, OppLz, Oppldots_3d, OppNa1g, OppNeg, OppN_3d,
+oppList = {Hamiltonian, HExchange, OppSsqr, OppLsqr, OppJsqr, OppSz, OppLz, Oppldots_3d, OppNe, OppNt2, OppN_3d,
            OppN_Ld, OppN_2p};
 print('\n');
 print('================================================================================================\n');
 print('Analysis of the initial Hamiltonian:\n');
-print(' <E>  <E_ex> <S^2> <L^2>   <J^2>  <S_z> <L_z>  <l.s> Neg Nt2g N_3d   N_L N_2p');
+print(' <E>  <E_ex> <S^2> <L^2>   <J^2>  <S_z> <L_z>  <l.s> Ne Nt2 N_3d   N_L N_2p');
 for i = 1, #psiList do
     for j = 1, #oppList do
         expectationvalue = Chop(psiList[i] * oppList[j] * psiList[i])
@@ -392,8 +392,8 @@ print('=========================================================================
 -- print( '\n');
 print('=============================================\n');
 print('Analysis of the Calculated orbitals energies:\n');
-print("Veg =", Va1g)
-print("Vt2g =", Veg)
+print("Ve =", Ve)
+print("Vt2 =", Vt2)
 print('=============================================\n');
 -- spectra XAS
 doXAS = false

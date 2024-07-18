@@ -12,6 +12,7 @@ from os.path import isfile
 import time
 import subprocess
 import platform
+from .cases.utils.slater_integrals import get_slater_integrals
 
 from multiprocessing import Process
 import pickle
@@ -43,6 +44,25 @@ class QuantyLF:
                 line = line.split(maxsplit=1)
                 self.file_par_dict[line[0]] = line[1].strip()
 
+    '''
+    Search through all parameters for alls matches for given name.
+
+    Parameters
+    ----------
+    name: str
+        Name of parameter(s) to be searched
+    required: boolean, optional
+        If true, exception is raised if parameter is not present at least once. Default False
+
+    Returns
+    -------
+    List of parameter values that match the given name
+    '''
+    def __get_pars__(self, name, required = False):
+        par = [par[1] for par in self.par_list if par[0] == name]
+        if required and len(par) == 0:
+            raise ValueError(f'No parameter found for name {name}')
+        return par
 
     ####### Model the XAS edge jump and add it to the calculated output ###########
 
@@ -527,4 +547,57 @@ class QuantyLF:
     """
     def set_par_file(self, par_file):
         self.par_file = par_file
+
+
+
+    """
+    Exports all parameters to a csv file. All scaling factors will be applied.
+
+    Parameters
+    ----------
+    path: str, optional
+        Path and filename to be saved to, default './ExportedPars.csv'
+    ignore_pars: list of str, optional
+        List of parameters to ignore for export, default set to ['XAS_Gamma', 'XAS_Broad', 'RIXS_Gamma', 'RIXS_Broad', 'RIXS', 'VfScale', 'Gamma1']
+    """
+    def export_pars(self, path='ExportedPars.csv', ignore_pars = ['XAS_Gamma', 'XAS_Broad', 'RIXS_Gamma', 'RIXS_Broad', 'RIXS', 'VfScale', 'Gamma1']):
+        ion = self.__get_pars__('ion', required=True)[0]
+        oxy = self.__get_pars__('oxy', required=True)[0]
+
+        zeta_3d, F2dd, F4dd, zeta_2p, F2pd, G1pd, G3pd, Xzeta_3d, XF2dd, XF4dd = get_slater_integrals(ion, oxy)
+
+        export_par_list = []
+        for par in self.par_list:
+            name = par[0]
+            val = par[1]
+            if name in ignore_pars:
+                continue
+
+            # apply scaling factors
+            match name:
+                case 'tenDqF':
+                    tenDq = self.__get_pars__('tenDq', required=True)[0]
+                    export_par_list.append([name, val * tenDq])
+                case 'zeta_2p':
+                    export_par_list.append([name, val * zeta_2p])
+                case 'zeta_3d':
+                    export_par_list.append([name, val * zeta_3d])
+                case 'Xzeta_3d':
+                    export_par_list.append([name, val * Xzeta_3d])
+                case 'Fdd':
+                    export_par_list.append(['F2dd', val * F2dd])
+                    export_par_list.append(['F4dd', val * F4dd])
+                case 'XFdd':
+                    export_par_list.append(['XF2dd', val * XF2dd])
+                    export_par_list.append(['XF4dd', val * XF4dd])               
+                case 'Fpd':
+                    export_par_list.append(['F2pd', val * F2pd])
+                case 'Gpd':
+                    export_par_list.append(['G1pd', val * G1pd])
+                    export_par_list.append(['G3pd', val * G3pd])
+                case _:
+                    export_par_list.append([name, val])
+
+        export_par_list = np.asarray(export_par_list)
+        np.savetxt('ExportedPars.csv', export_par_list, delimiter=',', fmt="%s")
         

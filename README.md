@@ -318,3 +318,17 @@ par_file: str
 """
 set_par_file(par_file)
 ```
+
+```py
+"""
+Exports all parameters to a csv file. All scaling factors will be applied.
+
+Parameters
+----------
+path: str, optional
+    Path and filename to be saved to
+ignore_pars: list of str, optional
+    List of parameters to ignore for export
+"""
+export_pars(path='ExportedPars.csv', ignore_pars = ['XAS_Gamma', 'XAS_Broad', 'RIXS_Gamma', 'RIXS_Broad', 'RIXS', 'VfScale', 'Gamma1'])
+```

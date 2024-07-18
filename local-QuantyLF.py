@@ -61,4 +61,6 @@ quantyLF.add_broadening('XAS', [[-3.7, 0.5], [3, 0.7], [9, 0.7]], gamma=0.5)
 quantyLF.add_broadening('RIXS', [[0, 0.3], [3, 0.8], [4,0.9], [6,1]])
 
 # Run calculation in 'RIXS' mode
-quantyLF.fit('RIXS')
+# quantyLF.fit('RIXS')
+
+quantyLF.export_pars()

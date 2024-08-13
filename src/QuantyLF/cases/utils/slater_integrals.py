@@ -180,17 +180,44 @@ def get_slater_integrals(ion, oxy):
         XF4dd = 6.152
 
     elif ion == 22:
-        
-        zeta_3d = 0.016
-        F2dd = 8.243
-        F4dd = 5.132
-        zeta_2p = 3.776
-        F2pd = 4.849
-        G1pd = 3.376
-        G3pd = 1.917
-        Xzeta_3d = 0.023
-        XF2dd = 9.213
-        XF4dd = 5.744
+        if oxy == 2:
+            nd = 2
+            zeta_3d=0.016
+            F2dd=8.243
+            F4dd=5.132
+            zeta_2p=3.776
+            F2pd=4.849
+            G1pd=3.376
+            G3pd=1.917
+            Xzeta_3d=0.023
+            XF2dd=9.213
+            XF4dd=5.744
+        elif oxy == 3:
+            nd = 1
+            zeta_3d=0.019
+            F2dd=5.907
+            F4dd=3.711
+            zeta_2p=3.710
+            F2pd=3.187
+            G1pd=3.393
+            G3pd=1.258
+            Xzeta_3d=0.027
+            XF2dd=10.342
+            XF4dd=6.499
+        elif oxy == 4:
+            nd = 0
+            zeta_3d=0.019
+            F2dd=0.000
+            F4dd=0.000
+            zeta_2p=3.776
+            F2pd=6.301
+            G1pd=4.626
+            G3pd=2.632
+            Xzeta_3d=0.032
+            XF2dd=0.000
+            XF4dd=0.000
+        else:
+            print("No data available for this ion and valence configuration...")
 
     elif ion == 21:
         

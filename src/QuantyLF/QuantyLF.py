@@ -577,7 +577,7 @@ class QuantyLF:
             match name:
                 case 'tenDqF':
                     tenDq = self.__get_pars__('tenDq', required=True)[0]
-                    export_par_list.append([name, float(val) * tenDq])
+                    export_par_list.append([name, float(val) * float(tenDq)])
                 case 'zeta_2p':
                     export_par_list.append([name, float(val) * float(zeta_2p)])
                 case 'zeta_3d':

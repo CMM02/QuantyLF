@@ -577,24 +577,24 @@ class QuantyLF:
             match name:
                 case 'tenDqF':
                     tenDq = self.__get_pars__('tenDq', required=True)[0]
-                    export_par_list.append([name, val * tenDq])
+                    export_par_list.append([name, float(val) * tenDq])
                 case 'zeta_2p':
-                    export_par_list.append([name, val * zeta_2p])
+                    export_par_list.append([name, float(val) * float(zeta_2p)])
                 case 'zeta_3d':
-                    export_par_list.append([name, val * zeta_3d])
+                    export_par_list.append([name, float(val) * float(zeta_3d)])
                 case 'Xzeta_3d':
-                    export_par_list.append([name, val * Xzeta_3d])
+                    export_par_list.append([name, float(val) * float(Xzeta_3d)])
                 case 'Fdd':
-                    export_par_list.append(['F2dd', val * F2dd])
-                    export_par_list.append(['F4dd', val * F4dd])
+                    export_par_list.append(['F2dd', float(val) * float(F2dd)])
+                    export_par_list.append(['F4dd', float(val) * float(F4dd)])
                 case 'XFdd':
-                    export_par_list.append(['XF2dd', val * XF2dd])
-                    export_par_list.append(['XF4dd', val * XF4dd])               
+                    export_par_list.append(['XF2dd', float(val) * float(XF2dd)])
+                    export_par_list.append(['XF4dd', float(val) * float(XF4dd)])               
                 case 'Fpd':
-                    export_par_list.append(['F2pd', val * F2pd])
+                    export_par_list.append(['F2pd', float(val) * float(F2pd)])
                 case 'Gpd':
-                    export_par_list.append(['G1pd', val * G1pd])
-                    export_par_list.append(['G3pd', val * G3pd])
+                    export_par_list.append(['G1pd', float(val) * float(G1pd)])
+                    export_par_list.append(['G3pd', float(val) * float(G3pd)])
                 case _:
                     export_par_list.append([name, val])
 

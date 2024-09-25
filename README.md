@@ -332,3 +332,6 @@ ignore_pars: list of str, optional
 """
 export_pars(path='ExportedPars.csv', ignore_pars = ['XAS_Gamma', 'XAS_Broad', 'RIXS_Gamma', 'RIXS_Broad', 'RIXS', 'VfScale', 'Gamma1'])
 ```
+
+## Develop new cases
+To develop new cases, the struture of the other `.lua`-files can be used. Clone the [GitHub](https://github.com/CMM02/QuantyLF) repository and checkout the `dev` branch. Copy the file and the utils directory from [this directory](https://github.com/CMM02/QuantyLF/tree/main/src/QuantyLF/cases) into the directory of choice. Make the changes wanted. After that add the case file to the same [directory](https://github.com/CMM02/QuantyLF/tree/main/src/QuantyLF/cases). Increment the version number in the `setup.cfg` and push the `dev` branch. On GitHub create a pull request from `dev` to `main` and merge. Check if the [publishing action](https://github.com/CMM02/QuantyLF/actions) runs through.

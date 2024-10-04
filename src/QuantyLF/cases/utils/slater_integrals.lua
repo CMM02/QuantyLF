@@ -188,8 +188,8 @@ function get_slater_integrals(ion, oxy)
     elseif ion == 23 then
         if oxy == 2 then
             nd = 3
-        elseif oxy == 3 then
-            nd = 2
+        elseif oxy == 5 then
+            nd = 0
         elseif oxy == 4 then
             nd = 1
         end

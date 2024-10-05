@@ -166,18 +166,58 @@ def get_slater_integrals(ion, oxy):
             
         
 
-    elif ion == 23:
-        
-        zeta_3d = 0.022
-        F2dd = 8.961
-        F4dd = 5.576
-        zeta_2p = 4.650
-        F2pd = 5.351
-        G1pd = 3.792
-        G3pd = 2.154
-        Xzeta_3d = 0.031
-        XF2dd = 9.875
-        XF4dd = 6.152
+     elif ion == 23: ## Crispy
+        if oxy == 2:
+            nd = 3
+            zeta_3d = 0.022
+            F2dd = 8.962
+            F4dd = 5.577
+            zeta_2p = 4.650
+            F2pd = 5.351
+            G1pd = 3.793
+            G3pd  2.154
+            Xzeta_3d = 0.031
+            XF2dd = 9.876
+            XF4dd = 6.153
+        elif oxy == 3:   ## Crispy
+            nd = 2
+            zeta_3d = 0.027
+            F2dd = 10.127
+            F4dd = 6.354
+            zeta_2p = 4.650
+            F2pd = 6.056
+            G1pd = 4.390
+            G3pd = .496
+            Xzeta_3d = 0.036
+            XF2dd = 10.974
+            XF4dd = 6.888
+        elif oxy == 4:  ## Crispy
+            nd = 1
+            zeta_3d = 0.031
+            F2dd = 0.000
+            F4dd = 0.000
+            zeta_2p = 4.650
+            F2pd = 6.758
+            G1pd = 5.012
+            G3pd = 2.852
+            Xzeta_3d = 0.042
+            XF2dd = 11.965
+            XF4dd = 7.554
+        elif oxy == 5:  ## Crispy
+            nd = 0
+            zeta_3d = 0.000
+            F2dd = 0.000
+            F4dd = 0.000
+            zeta_2p = 4.652
+            F2pd = 7.460
+            G1pd = 5.661
+            G3pd = 3.226
+            Xzeta_3d = 0.047
+            XF2dd = 0.000
+            XF4dd = 0.000
+        else:
+            print("No data available for this ion and valence configuration...")
+
 
     elif ion == 22:
         if oxy == 2:

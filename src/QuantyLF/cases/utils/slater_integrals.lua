@@ -185,35 +185,60 @@ function get_slater_integrals(ion, oxy)
             os.exit()
         end
 
-    elseif ion == 23 then
+    elseif ion == 23 then  
         if oxy == 2 then
             nd = 3
-        elseif oxy == 5 then
-            nd = 0
-        zeta_3d = 0.022;
-        F2dd = 8.961;
-        F4dd = 5.576
-        zeta_2p = 4.650;
-        F2pd = 5.351;
-        G1pd = 3.792;
-        G3pd = 2.154
-        Xzeta_3d = 0.031;
-        XF2dd = 9.875;
-        XF4dd = 6.152
+            zeta_3d=0.022;
+            F2dd=8.962;
+            F4dd=5.577;
+            zeta_2p=4.650;
+            F2pd=5.351;
+            G1pd=3.793;
+            G3pd=2.154;
+            Xzeta_3d=0.031;
+            XF2dd=9.876;
+            XF4dd=6.153;
+        elseif oxy == 3 then
+            nd = 2
+            zeta_3d=0.022;
+            F2dd=8.962;
+            F4dd=5.577;
+            zeta_2p=4.650;
+            F2pd=5.351;
+            G1pd=3.793;
+            G3pd=2.154;
+            Xzeta_3d=0.031;
+            XF2dd=9.876;
+            XF4dd=6.153;
         elseif oxy == 4 then
             nd = 1
+            zeta_3d=0.031;
+            F2dd=0.000;
+            F4dd=0.000;
+            zeta_2p=4.650;
+            F2pd=6.758;
+            G1pd=5.012;
+            G3pd=2.852;
+            Xzeta_3d=0.042;
+            XF2dd=11.965;
+            XF4dd=7.554;
+        elseif oxy == 5 then
+            nd = 0
+            zeta_3d=0.000;
+            F2dd=0.000;
+            F4dd=0.000;
+            zeta_2p=4.652;
+            F2pd=7.460;
+            G1pd=5.661;
+            G3pd=3.226;
+            Xzeta_3d=0.047;
+            XF2dd=0.000;
+            XF4dd=0.000;
+        else
+            print("No data available for this ion and valence configuration...")
+            os.exit()
         end
-        zeta_3d = 0.022;
-        F2dd = 8.961;
-        F4dd = 5.576
-        zeta_2p = 4.650;
-        F2pd = 5.351;
-        G1pd = 3.792;
-        G3pd = 2.154
-        Xzeta_3d = 0.031;
-        XF2dd = 9.875;
-        XF4dd = 6.152
-
+        
     elseif ion == 22 then
         if oxy == 2 then
             nd = 2
@@ -264,11 +289,11 @@ function get_slater_integrals(ion, oxy)
         end
         zeta_3d = 0.010;
         F2dd = 0;
-        F4dd = 0
+        F4dd = 0;
         zeta_2p = 3.032;
         F2pd = 4.332;
         G1pd = 2.950;
-        G3pd = 1.674
+        G3pd = 1.674;
         Xzeta_3d = 0.017;
         XF2dd = 8.530;
         XF4dd = 5.321

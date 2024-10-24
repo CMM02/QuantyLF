@@ -166,7 +166,7 @@ def get_slater_integrals(ion, oxy):
             
         
 
-     elif ion == 23: ## Crispy
+    elif ion == 23: ## Crispy
         if oxy == 2:
             nd = 3
             zeta_3d = 0.022

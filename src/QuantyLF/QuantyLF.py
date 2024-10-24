@@ -578,6 +578,12 @@ class QuantyLF:
                 case 'tenDqF':
                     tenDq = self.__get_pars__('tenDq', required=True)[0]
                     export_par_list.append([name, float(val) * float(tenDq)])
+                case 'DsF':
+                    Ds = self.__get_pars__('Ds', required=True)[0]
+                    export_par_list.append([name, float(val) * float(Ds)])
+                case 'DtF':
+                    Dt = self.__get_pars__('Dt', required=True)[0]
+                    export_par_list.append([name, float(val) * float(Dt)])
                 case 'zeta_2p':
                     export_par_list.append([name, float(val) * float(zeta_2p)])
                 case 'zeta_3d':

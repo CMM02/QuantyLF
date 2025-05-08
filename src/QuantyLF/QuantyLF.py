@@ -32,6 +32,7 @@ class QuantyLF:
         self.par_file = 'ParVals.txt'
         self.file_par_dict = {}
         self.__read_par_file__()
+        self.fixed_energy_shift = None
 
     def __read_par_file__(self):
         # check if the file exists
@@ -181,6 +182,10 @@ class QuantyLF:
         amp = np.array([1])
         lowlim = np.array([-1e5,0])
         highlim = np.array([1e5,np.inf])
+        if self.fixed_energy_shift is not None:
+            lowlim[0] = self.fixed_energy_shift - 0.0001
+            highlim[0] = self.fixed_energy_shift + 0.0001
+            dE[0] = self.fixed_energy_shift
         
         #perform a non-linear least squares fit of the energy shift and amplitude of the 
         #calculated XAS, in order to compare it to experiment
@@ -457,6 +462,18 @@ class QuantyLF:
             val = f'{lorenzian[0]} {lorenzian[1]}'
             self.add_par(type + "_Broad", val, from_file=False)
 
+
+    def set_fixed_energy_shift(self, shift):
+        """
+        Set a fixed energy shift for the XAS calculation. This is useful for cases where the energy shift is known and should not be fitted.
+
+        Parameters
+        ----------
+        shift: float
+            The fixed energy shift to be applied to the XAS calculation
+        """
+        self.fixed_energy_shift = shift
+
     """
     Fit the parameters of the model to the experimental data
 
@@ -465,8 +482,29 @@ class QuantyLF:
     mode: str
         "XAS" or "RIXS". If "XAS", only the XAS data is fitted. If "RIXS", both XAS and RIXS data is fitted
     """
-    def fit(self, type):        
-        self.__fit_pars__(type)
+    def fit(self, mode):        
+        self.__fit_pars__(mode)
+
+    def calc_spectra(self, mode):
+        """
+        Calculate the spectra for the given type (XAS or RIXS)
+
+        Parameters
+        ----------
+        mode: str
+            "XAS" or "RIXS". If "XAS", only the XAS data is calculated. If "RIXS", both XAS and RIXS data is calculated
+        """
+        # workaround
+        params = lmfit.Parameters()
+        for i in self.par_list:
+            if i[4] == 1:
+                params.add(i[0],value=i[1],min=i[2],max=i[3])
+
+                
+        global lsiter
+        lsiter = 1
+
+        self.__quanty_res__(params, self.par_list, mode)
 
     """
     Load the experimental XAS data from a file (no header, two columns: energy, intensity)
